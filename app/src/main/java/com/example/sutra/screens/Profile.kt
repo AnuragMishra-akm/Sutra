@@ -1,6 +1,5 @@
 package com.example.sutra.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,7 +25,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
+import com.example.sutra.R
 import com.example.sutra.model.SutraModel
 import com.example.sutra.model.UserModel
 import com.example.sutra.navigation.Routes
@@ -121,7 +122,7 @@ fun ProfileContent(
             TopAppBar(
                 title = { },
                 navigationIcon = {
-                    IconButton(onClick = { navController.popBackStack() }) {
+                    IconButton(onClick = { navController.navigate(Routes.Home.route)}) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -195,7 +196,7 @@ fun ProfileHeader(
     onFollowingClick: () -> Unit,
     onFollowClick: () -> Unit
 ) {
-    Column(modifier = Modifier.padding(16.dp)) {
+    Column(modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -206,13 +207,15 @@ fun ProfileHeader(
                 Text(text = user.username, fontSize = 18.sp)
                 Text(text = user.bio, fontSize = 16.sp, modifier = Modifier.padding(top = 4.dp))
             }
-            Image(
-                painter = rememberAsyncImagePainter(model = user.imageUrl),
+            AsyncImage(
+                model = user.imageUrl,
                 contentDescription = "Profile Picture",
                 modifier = Modifier
                     .size(80.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = R.drawable.person),
+                error = painterResource(id = R.drawable.person)
             )
         }
         
@@ -230,25 +233,24 @@ fun ProfileHeader(
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
+        Spacer(modifier = Modifier.height(12.dp))
+        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             if (isCurrentUser) {
                 OutlinedButton(onClick = { /* Edit Profile */ }, modifier = Modifier.weight(1f)) {
                     Text("Edit profile")
                 }
-                Spacer(modifier = Modifier.width(8.dp))
                 OutlinedButton(onClick = { /* Share Profile */ }, modifier = Modifier.weight(1f)) {
                     Text("Share profile")
                 }
             } else {
-                Button(onClick = { onFollowClick() }) {
+                Button(onClick = { onFollowClick() }, modifier = Modifier.fillMaxWidth()) {
                     Text("Follow")
                 }
             }
         }
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(12.dp))
         HorizontalDivider()
-        Text("Sutras", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(vertical = 12.dp))
+        Text("Sutras", fontWeight = FontWeight.Bold, fontSize = 18.sp, modifier = Modifier.padding(vertical = 8.dp))
         HorizontalDivider()
     }
 }

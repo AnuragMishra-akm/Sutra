@@ -1,13 +1,9 @@
 package com.example.sutra.screens
 
-import android.net.http.SslCertificate.saveState
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.systemGesturesPadding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Notifications
@@ -36,8 +32,14 @@ fun BottomNav(
     val navController1 = rememberNavController()
     Scaffold(
         bottomBar = { MyCustomBottomBar(navController1) }
-    ) {innerPadding ->
-        NavHost(navController = navController1, startDestination = Routes.Home.route, modifier = Modifier.padding(innerPadding)){
+    ) { innerPadding ->
+        NavHost(
+            navController = navController1, 
+            startDestination = Routes.Home.route, 
+            // Only apply bottom padding to account for the BottomAppBar
+            // This prevents double top padding from the status bar
+            modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding()).systemBarsPadding()
+        ){
             composable(Routes.Home.route){
                 Home(navController)
             }
@@ -48,14 +50,12 @@ fun BottomNav(
                 Notification()
             }
             composable(Routes.Profile.route){
-                Profile(navController)
+                Profile(navController1)
             }
             composable (Routes.Search.route){
                 Search(navController)
             }
-
         }
-
     }
 }
 
@@ -88,8 +88,7 @@ fun MyCustomBottomBar(navController: NavController){
             route = Routes.Profile.route,
             icon = Icons.Rounded.Person
         ),
-
-        )
+    )
     BottomAppBar {
         list.forEach { item ->
             val selected = item.route == backStackEntry.value?.destination?.route
@@ -100,12 +99,12 @@ fun MyCustomBottomBar(navController: NavController){
                         popUpTo(navController.graph.findStartDestination().id){
                             saveState = true
                         }
-                        launchSingleTop=true
+                        launchSingleTop = true
                     }
                 },
-                {
+                icon = {
                     Icon(
-                        imageVector = if (selected) item.icon else item.icon,
+                        imageVector = item.icon,
                         contentDescription = item.title
                     )
                 }

@@ -6,9 +6,7 @@ plugins {
 
 android {
     namespace = "com.example.sutra"
-    compileSdk {
-        version = release(36)
-    }
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.example.sutra"
@@ -65,5 +63,6 @@ dependencies {
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-storage")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     implementation("androidx.compose.runtime:runtime-livedata:1.10.2")
 }

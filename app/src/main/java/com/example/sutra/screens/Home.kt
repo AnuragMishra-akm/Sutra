@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -25,10 +26,13 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
+import coil3.compose.AsyncImage
+import coil3.compose.rememberAsyncImagePainter
 import com.example.sutra.R
 import com.example.sutra.model.SutraModel
 import com.example.sutra.model.UserModel
 import com.example.sutra.navigation.Routes
+import com.example.sutra.utils.SharedPrep
 import com.example.sutra.viewmodel.HomeViewModel
 
 @Composable
@@ -45,6 +49,7 @@ fun HomeContent(
     navController: NavHostController,
     sutraAndUser: List<Pair<SutraModel, UserModel>>
 ) {
+    val context = LocalContext.current
     Scaffold(
         topBar = {
             CenterAlignedTopAppBar(
@@ -81,7 +86,10 @@ fun HomeContent(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = painterResource(id = R.drawable.person),
+                        painter = if (SharedPrep.getImageUri(context).isEmpty())
+                            painterResource(id = R.drawable.person)
+                        else
+                            rememberAsyncImagePainter(SharedPrep.getImageUri(context)),
                         contentDescription = "User Profile",
                         modifier = Modifier
                             .size(40.dp)
@@ -124,8 +132,8 @@ fun HomePreview() {
         SutraModel(sutra = "Welcome to Sutra! This is a mock post for preview.", userId = "1") to
                 UserModel(username = "preview_user", uid = "1")
     )
-    HomeContent(
+    Home(
         navController = rememberNavController(),
-        sutraAndUser = mockData
+
     )
 }

@@ -1,6 +1,5 @@
 package com.example.sutra.screens
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
@@ -23,10 +22,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.Dialog
-import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import coil3.compose.rememberAsyncImagePainter
+import coil3.compose.AsyncImage
 import com.example.sutra.R
 import com.example.sutra.model.SutraModel
 import com.example.sutra.model.UserModel
@@ -44,9 +41,9 @@ fun PostItem(
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            .padding(16.dp),
+        shape = RoundedCornerShape(16.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 10.dp)
     ) {
         Column(
             modifier = Modifier
@@ -56,12 +53,12 @@ fun PostItem(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 16.dp, vertical = 12.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Box(contentAlignment = Alignment.BottomEnd) {
-                    Image(
-                        painter = rememberAsyncImagePainter(user.imageUrl),
+                    AsyncImage(
+                        model = user.imageUrl,
                         contentDescription = "User Profile Picture",
                         modifier = Modifier
                             .size(40.dp)
@@ -69,7 +66,9 @@ fun PostItem(
                             .clickable {
                                 navController.navigate("${Routes.Profile.route}/$userId")
                             },
-                        contentScale = ContentScale.Crop
+                        contentScale = ContentScale.Crop,
+                        placeholder = painterResource(id = R.drawable.person),
+                        error = painterResource(id = R.drawable.person)
                     )
                     Icon(
                         Icons.Default.Add,
@@ -103,11 +102,13 @@ fun PostItem(
                     Text(text = "...", fontWeight = FontWeight.Bold)
                 }
             }
-            Spacer(modifier = Modifier.width(4.dp))
+            
             Text(
                 text = sutra.sutra,
                 fontSize = 18.sp,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp)
             )
+            
             // Post Content / Images
             if (sutra.images.isNotEmpty()) {
                 LazyRow(
@@ -117,8 +118,8 @@ fun PostItem(
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(sutra.images) { imageUrl ->
-                        Image(
-                            painter = rememberAsyncImagePainter(imageUrl),
+                        AsyncImage(
+                            model = imageUrl,
                             contentDescription = "Post image",
                             modifier = Modifier
                                 .size(200.dp)
@@ -171,9 +172,9 @@ fun PostItem(
 
 @Composable
 fun FullScreenImageViewer(imageUrl: String, onDismiss: () -> Unit) {
-    Dialog(
+    androidx.compose.ui.window.Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(usePlatformDefaultWidth = false)
+        properties = androidx.compose.ui.window.DialogProperties(usePlatformDefaultWidth = false)
     ) {
         Box(
             modifier = Modifier
@@ -181,8 +182,8 @@ fun FullScreenImageViewer(imageUrl: String, onDismiss: () -> Unit) {
                 .clickable(onClick = onDismiss),
             contentAlignment = Alignment.Center
         ) {
-            Image(
-                painter = rememberAsyncImagePainter(imageUrl),
+            AsyncImage(
+                model = imageUrl,
                 contentDescription = "Full screen image",
                 modifier = Modifier.fillMaxWidth(),
                 contentScale = ContentScale.Fit
